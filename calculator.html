@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proportional CSS Calculator</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            background: rgba(0,210,255,0.2);
+            color: #00d2ff;
+        }
+        
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        
+        .input-group label {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .input-group input {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 0.65rem 0.75rem;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #00d2ff;
+            box-shadow: 0 0 0 3px rgba(0,210,255,0.15);
+        }
+        
+        .input-group input:read-only {
+            background: rgba(0,210,255,0.1);
+            border-color: rgba(0,210,255,0.3);
+            color: #00d2ff;
+        }
+        
+        .ratio-display {
+            font-size: 0.85rem;
+            color: #4ade80;
+            text-align: right;
+            padding-top: 0.5rem;
+        }
+        
+        .output-section {
+            background: #0d1117;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .output-header span {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        .copy-btn {
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            border: none;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .copy-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,210,255,0.3);
+        }
+        
+        .copy-btn.copied {
+            background: #4ade80;
+        }
+        
+        #cssOutput {
+            padding: 1rem;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            color: #c9d1d9;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .comment { color: #8b949e; }
+        .property { color: #79c0ff; }
+        .value { color: #a5d6ff; }
+        .selector { color: #ff7b72; }
+        
+        @media (max-width: 700px) {
+            .input-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Proportional CSS Calculator</h1>
+        <p class="subtitle">Generate perfectly proportional viewport-based font scaling</p>
+        
+        <!-- Mobile Breakpoint -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">📱 Mobile <span class="badge">&lt; tablet start</span></span>
+                <span class="ratio-display" id="mobileRatio">Ratio: —</span>
+            </div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Min Viewport (px)</label>
+                    <input type="number" id="mobileMinVw" value="320" oninput="calculate()">
+                </div>
+                <div class="input-group">
+                    <label>Max Viewport (px)</label>
+                    <input type="number" id="mobileMaxVw" value="767" oninput="calculate()">
+                </div>
+                <div class="input-group">
+                    <label>Start Font (px)</label>
+                    <input type="number" id="mobileMinPx" value="13" step="0.5" oninput="calculate()">
+                </div>
+                <div class="input-group">
+                    <label>End Font (px)</label>
+                    <input type="number" id="mobileMaxPx" value="31.16" step="0.01" readonly>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tablet Breakpoint -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">📟 Tablet <span class="badge">tablet → desktop</span></span>
+                <span class="ratio-display" id="tabletRatio">Ratio: —</span>
+            </div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Min Viewport (px)</label>
+                    <input type="number" id="tabletMinVw" value="768" oninput="calculate()">
+                </div>
+                <div class="input-group">
+                    <label>Max Viewport (px)</label>
+                    <input type="number" id="tabletMaxVw" value="896" oninput="calculate()">
+                </div>
+                <div class="input-group">
+                    <label>Start Font (px)</label>
+                    <input type="number" id="tabletMinPx" value="18" step="0.5" oninput="calculate()">
+                </div>
+                <div class="input-group">
+                    <label>End Font (px)</label>
+                    <input type="number" id="tabletMaxPx" value="21" step="0.01" readonly>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Desktop Breakpoint -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">🖥️ Desktop <span class="badge">≥ desktop start</span></span>
+                <span class="ratio-display" id="desktopRatio">Ratio: —</span>
+            </div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Min Viewport (px)</label>
+                    <input type="number" id="desktopMinVw" value="896" oninput="calculate()">
+                </div>
+                <div class="input-group">
+                    <label>Max Viewport (px)</label>
+                    <input type="number" id="desktopMaxVw" value="1920" oninput="calculate()">
+                </div>
+                <div class="input-group">
+                    <label>Start Font (px)</label>
+                    <input type="number" id="desktopMinPx" value="14" step="0.5" oninput="calculate()">
+                </div>
+                <div class="input-group">
+                    <label>End Font (px)</label>
+                    <input type="number" id="desktopMaxPx" value="30" step="0.01" readonly>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CSS Output -->
+        <div class="card">
+            <div class="output-section">
+                <div class="output-header">
+                    <span>Generated CSS</span>
+                    <button class="copy-btn" onclick="copyCSS()">Copy CSS</button>
+                </div>
+                <div id="cssOutput"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function calculate() {
+            // Get all values
+            const mobile = {
+                minVw: parseFloat(document.getElementById('mobileMinVw').value),
+                maxVw: parseFloat(document.getElementById('mobileMaxVw').value),
+                minPx: parseFloat(document.getElementById('mobileMinPx').value)
+            };
+            
+            const tablet = {
+                minVw: parseFloat(document.getElementById('tabletMinVw').value),
+                maxVw: parseFloat(document.getElementById('tabletMaxVw').value),
+                minPx: parseFloat(document.getElementById('tabletMinPx').value)
+            };
+            
+            const desktop = {
+                minVw: parseFloat(document.getElementById('desktopMinVw').value),
+                maxVw: parseFloat(document.getElementById('desktopMaxVw').value),
+                minPx: parseFloat(document.getElementById('desktopMinPx').value)
+            };
+            
+            // Calculate proportional end values
+            mobile.maxPx = (mobile.minPx / mobile.minVw) * mobile.maxVw;
+            tablet.maxPx = (tablet.minPx / tablet.minVw) * tablet.maxVw;
+            desktop.maxPx = (desktop.minPx / desktop.minVw) * desktop.maxVw;
+            
+            // Update readonly fields
+            document.getElementById('mobileMaxPx').value = mobile.maxPx.toFixed(2);
+            document.getElementById('tabletMaxPx').value = tablet.maxPx.toFixed(2);
+            document.getElementById('desktopMaxPx').value = desktop.maxPx.toFixed(2);
+            
+            // Update ratio displays
+            const mobileRatio = (mobile.minPx / mobile.minVw * 100).toFixed(4);
+            const tabletRatio = (tablet.minPx / tablet.minVw * 100).toFixed(4);
+            const desktopRatio = (desktop.minPx / desktop.minVw * 100).toFixed(4);
+            
+            document.getElementById('mobileRatio').textContent = `Ratio: ${mobileRatio}%`;
+            document.getElementById('tabletRatio').textContent = `Ratio: ${tabletRatio}%`;
+            document.getElementById('desktopRatio').textContent = `Ratio: ${desktopRatio}%`;
+            
+            // Generate CSS
+            generateCSS(mobile, tablet, desktop);
+        }
+        
+        function generateCSS(mobile, tablet, desktop) {
+            const css = `/* =================================
+   Proportional Viewport Scaling
+   Generated by CSS Calculator
+   ================================= */
+
+/* Base Setup */
+html {
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* =================================
+   MOBILE < ${tablet.minVw}px
+   Ratio: ${(mobile.minPx / mobile.minVw * 100).toFixed(4)}% constant
+   ================================= */
+@media (max-width: ${tablet.minVw - 1}px) {
+    html {
+        font-size: calc(${mobile.minPx}px + (${mobile.maxPx.toFixed(2)} - ${mobile.minPx}) * ((100vw - ${mobile.minVw}px) / (${mobile.maxVw} - ${mobile.minVw})));
+    }
+}
+
+/* =================================
+   TABLET ${tablet.minVw}px → ${tablet.maxVw}px
+   Ratio: ${(tablet.minPx / tablet.minVw * 100).toFixed(4)}% constant
+   ================================= */
+@media (min-width: ${tablet.minVw}px) and (max-width: ${tablet.maxVw}px) {
+    html {
+        font-size: calc(${tablet.minPx}px + (${tablet.maxPx.toFixed(2)} - ${tablet.minPx}) * ((100vw - ${tablet.minVw}px) / (${tablet.maxVw} - ${tablet.minVw})));
+    }
+}
+
+/* =================================
+   DESKTOP ≥ ${desktop.minVw}px
+   Ratio: ${(desktop.minPx / desktop.minVw * 100).toFixed(4)}% constant
+   ================================= */
+@media (min-width: ${desktop.minVw}px) {
+    html {
+        font-size: min(${desktop.maxPx.toFixed(0)}px,
+            calc(${desktop.minPx}px + (${desktop.maxPx.toFixed(2)} - ${desktop.minPx}) * ((100vw - ${desktop.minVw}px) / (${desktop.maxVw} - ${desktop.minVw}))));
+    }
+}`;
+            
+            // Syntax highlight and display
+            const highlighted = css
+                .replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="comment">$1</span>')
+                .replace(/(@media[^{]+)/g, '<span class="selector">$1</span>')
+                .replace(/(html|body|\*)/g, '<span class="selector">$1</span>')
+                .replace(/(font-size|box-sizing|margin|padding):/g, '<span class="property">$1</span>:');
+            
+            document.getElementById('cssOutput').innerHTML = highlighted;
+        }
+        
+        function copyCSS() {
+            const cssText = document.getElementById('cssOutput').textContent;
+            navigator.clipboard.writeText(cssText).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy CSS';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+        
+        // Initial calculation
+        calculate();
+    </script>
+</body>
+</html>

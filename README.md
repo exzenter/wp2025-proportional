@@ -115,3 +115,16 @@ All values are defined in `rem` so they scale with the root font size:
 - ✅ **No media query overload** – Single fluid formula per breakpoint
 - ✅ **WordPress compatible** – Uses standard `--wp--preset--*` naming
 - ✅ **Capped maximum** – Prevents oversizing on 4K+ displays
+
+---
+
+## CSS Calculator
+
+Use the included **`calculator.html`** to generate custom proportional CSS:
+
+1. Open `calculator.html` in your browser
+2. Edit the viewport ranges and starting font sizes for each breakpoint
+3. The end font sizes auto-calculate to maintain perfect proportionality
+4. Click **Copy CSS** to copy the generated code
+
+The calculator displays the constant ratio for each breakpoint, ensuring your scaling is mathematically correct.

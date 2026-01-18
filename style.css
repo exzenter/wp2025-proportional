@@ -20,21 +20,23 @@ body {
 
 /* =================================
    1. MOBILE < 768px
-   Proportional perfekt von 13 → 29px
+   Perfectly proportional: 13px → 31.16px
+   Ratio: 4.0625% constant (13/320 = 31.16/767)
    ================================= */
 @media (max-width: 767px) {
     html {
-        font-size: calc(13px + (29 - 13) * ((100vw - 320px) / (767 - 320)));
+        font-size: calc(13px + (31.16 - 13) * ((100vw - 320px) / (767 - 320)));
     }
 }
 
 /* =================================
    2. TABLET 768 → 896px
-   Proportional perfekt von 18 → 20.5px
+   Perfectly proportional: 18px → 21px
+   Ratio: 2.34% constant (18/768 = 21/896)
    ================================= */
 @media (min-width: 768px) and (max-width: 896px) {
     html {
-        font-size: calc(18px + (20.5 - 18) * ((100vw - 768px) / (896 - 768)));
+        font-size: calc(18px + (21 - 18) * ((100vw - 768px) / (896 - 768)));
     }
 }
 

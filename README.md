@@ -25,11 +25,13 @@ font-size: calc(minPx + (maxPx - minPx) * ((100vw - minVw) / (maxVw - minVw)));
 
 ## Breakpoint Overview
 
-| Breakpoint | Viewport Range | Font Size Range |
-|------------|----------------|-----------------|
-| **Mobile** | 320px → 767px | 13px → 29px |
-| **Tablet** | 768px → 896px | 18px → 20.5px |
-| **Desktop** | 896px → 1920px | 14px → 30px (capped) |
+| Breakpoint | Viewport Range | Font Size Range | Ratio |
+|------------|----------------|-----------------|-------|
+| **Mobile** | 320px → 767px | 13px → 31.16px | 4.06% |
+| **Tablet** | 768px → 896px | 18px → 21px | 2.34% |
+| **Desktop** | 896px → 1920px | 14px → 30px | 1.56% |
+
+> **Perfect Proportionality**: The font-size/viewport ratio stays constant within each breakpoint, ensuring all `rem` values scale uniformly.
 
 ---
 
@@ -38,20 +40,20 @@ font-size: calc(minPx + (maxPx - minPx) * ((100vw - minVw) / (maxVw - minVw)));
 ### 1. Mobile (< 768px)
 ```css
 html {
-    font-size: calc(13px + (29 - 13) * ((100vw - 320px) / (767 - 320)));
+    font-size: calc(13px + (31.16 - 13) * ((100vw - 320px) / (767 - 320)));
 }
 ```
-- Scales from **13px** at 320px to **29px** at 767px
-- Larger scaling ratio to ensure readability on small screens
+- Scales from **13px** at 320px to **31.16px** at 767px
+- Constant ratio: `13/320 = 31.16/767 = 4.0625%`
 
 ### 2. Tablet (768px → 896px)
 ```css
 html {
-    font-size: calc(18px + (20.5 - 18) * ((100vw - 768px) / (896 - 768)));
+    font-size: calc(18px + (21 - 18) * ((100vw - 768px) / (896 - 768)));
 }
 ```
-- Gentle transition from **18px** to **20.5px**
-- Bridges mobile and desktop proportionally
+- Scales from **18px** at 768px to **21px** at 896px
+- Constant ratio: `18/768 = 21/896 = 2.34%`
 
 ### 3. Desktop (≥ 896px)
 ```css
